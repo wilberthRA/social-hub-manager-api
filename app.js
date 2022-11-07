@@ -26,6 +26,16 @@ const routes = require("./auth/routes")(
     app,
     authenticator
 );
+// CORS
+const cors = require("cors");
+
+const corsOptions = {
+    origin: "http://localhost:3001",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+  };
+
+app.use(cors(corsOptions));
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(app.oauth.errorHandler());
