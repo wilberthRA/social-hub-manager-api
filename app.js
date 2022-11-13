@@ -17,7 +17,30 @@ const authenticator = require("./auth/authenticator")(userDB,twoFaDB);
 const routes = require("./auth/routes")(express.Router(),app,authenticator);
 // CORS
 const cors = require("cors");
+//Postgres
+const {Client} = require('pg')
 
+
+const client = new Client({
+    host: "localhost",
+    port : 5432,
+    user: "root",
+    password: "root",
+    database: "logrocket_oauth2"
+})
+
+client.connect();
+
+let query = `Select * from "Users"`;
+
+client.query(query, (err, res)=>{
+    if(!err){
+        console.log(res.rows);
+    } else{
+        console.log(err.message)
+    }
+    client.end;
+})
 
 const corsOptions = {
     origin: "http://localhost:3001",
