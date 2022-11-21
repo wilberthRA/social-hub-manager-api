@@ -3,6 +3,7 @@ const pgPool = require("./db/pgWrapper");
 const tokenDB = require("./db/tokenDB")(pgPool);
 const userDB = require("./db/userDB")(pgPool);
 const twoFaDB = require("./db/twoFaDB")(pgPool);
+const scheduleDB = require("./db/scheduleDB")(pgPool);
 // OAuth imports
 const oAuthService = require("./auth/tokenService")(userDB, tokenDB);
 const oAuth2Server = require("node-oauth2-server");
@@ -15,10 +16,12 @@ const testAPIRoutes = require("./test/testAPIRoutes.js")(express.Router(),app,te
 // Auth and const cors = require("cors");
 const authenticator = require("./auth/authenticator")(userDB,twoFaDB);
 const routes = require("./auth/routes")(express.Router(),app,authenticator);
+const schedule = require("./shedule/schedule")(scheduleDB);
+const scheduleRoutes = require("./shedule/routes.js")(express.Router(),app,schedule);
 // CORS
 const cors = require("cors");
 //Postgres
-const {Client} = require('pg')
+const {Client} = require('pg');
 
 
 const client = new Client({
@@ -54,6 +57,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(app.oauth.errorHandler());
 app.use("/auth", routes);
 app.use("/test", testAPIRoutes);
+app.use('/schedule',scheduleRoutes);
 const port = 3000;
 app.listen(port, () => {
     console.log(`listening on port ${port}`);

@@ -21,4 +21,12 @@ CREATE TABLE two_fa
    user_id integer,
    PRIMARY KEY (id),
    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+CREATE TABLE schedule(
+   id serial,
+   day text,
+   hour integer,
+   user_id integer,
+   PRIMARY KEY (id),
+   FOREIGN KEY (user_id) REFERENCES users(id)
 )

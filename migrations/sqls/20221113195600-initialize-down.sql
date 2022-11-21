@@ -2,3 +2,4 @@
 DROP TABLE users;
 DROP TABLE access_tokens;
 DROP TABLE two_fa;
+DROP TABLE schedule;
