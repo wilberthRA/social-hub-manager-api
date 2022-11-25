@@ -6,6 +6,9 @@ const twoFaDB = require("./db/twoFaDB")(pgPool);
 // OAuth imports
 const oAuthService = require("./auth/tokenService")(userDB, tokenDB);
 const oAuth2Server = require("node-oauth2-server");
+// API imports
+const TwitterApi = require("./twitter/twitterRoutes");
+const RedditApi = require("./Reddit/redditRoutes");
 // Express
 const express = require("express");
 const app = express();
@@ -18,7 +21,7 @@ const routes = require("./auth/routes")(express.Router(),app,authenticator);
 // CORS
 const cors = require("cors");
 //Postgres
-const {Client} = require('pg')
+const {Client} = require('pg');
 
 
 const client = new Client({
@@ -42,11 +45,14 @@ client.query(query, (err, res)=>{
     client.end;
 })
 
-const corsOptions = {
+const corsOptions = [{
     origin: "http://localhost:3001",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false},{
+    origin: "http://localhost:3000",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
-  };
+  }];
 
 app.use(cors(corsOptions));
 app.use(express.json())
@@ -54,6 +60,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(app.oauth.errorHandler());
 app.use("/auth", routes);
 app.use("/test", testAPIRoutes);
+app.use("/twitter", TwitterApi);
+app.use("/reddit",RedditApi);
 const port = 3000;
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
